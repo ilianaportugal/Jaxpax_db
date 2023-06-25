@@ -1,12 +1,10 @@
 -- Task 1: Joining Similar Tables --
 
-```
 SELECT supemailaddr
 FROM supplier, fabric, product
 WHERE product.prodFabCode = fabric.FabCode
 AND fabric.fabsupplier = supplier.supid
 AND prodDESC = 'Canoe Pack';
-```
 
 SELECT prodid, proddesc
 FROM producteast
