@@ -1,0 +1,109 @@
+-- Task 1: Joining Similar Tables --
+
+```
+SELECT supemailaddr
+FROM supplier, fabric, product
+WHERE product.prodFabCode = fabric.FabCode
+AND fabric.fabsupplier = supplier.supid
+AND prodDESC = 'Canoe Pack';
+```
+
+SELECT prodid, proddesc
+FROM producteast
+UNION
+SELECT prodid, proddesc
+FROM productwest;
+
+SELECT prodid, proddesc
+FROM producteast
+INTERSECT
+SELECT prodid, proddesc
+FROM productwest;
+
+-- Task 2: Functions and Grouping --
+
+SELECT avg(prodprice), 
+sum(prodprice), 
+min(prodprice), 
+max(prodprice),
+count(prodprice)
+FROM Product;
+
+SELECT ordnum, avg(price)
+FROM orderitem
+GROUP BY ordnum;
+
+SELECT ordnum, avg(price), count(prodid)
+FROM orderitem
+GROUP BY ordnum;
+
+SELECT shipcompany, count(ordnum)
+FROM shipper, orders
+WHERE shipper.ShipID = orders.OrdShipID
+GROUP BY shipcompany;
+
+-- Task 3: Grouping with WHERE and HAVING --
+
+SELECT ordnum, count(prodid)
+FROM orderitem
+GROUP BY ordnum
+HAVING count(prodid) > 1;
+
+SELECT ordnum, count(orderitem.prodID)
+FROM orderitem, product, fabric, supplier
+WHERE orderitem.prodID = product.prodID
+AND fabric.FabCode = product.prodFabCode
+AND fabric.FabSupplier = supplier.SupID
+AND supstate = 'MN'
+GROUP BY ordnum
+HAVING count(orderitem.prodID) > 1;
+
+-- Task 4: Subqueries --
+
+SELECT proddesc, prodprice
+FROM product
+WHERE prodprice > 56.32;
+
+SELECT proddesc, prodprice
+FROM product
+WHERE prodprice >
+(SELECT avg(prodprice)
+FROM product);
+
+SELECT CustLastName, CustFirstName
+FROM Customer
+WHERE CustID IN
+(SELECT ordcustid
+FROM orders
+WHERE orddate = '2020/12/14');
+
+-- Task 5: Calculated Fields --
+
+SELECT proddesc,
+prodprice,
+prodcost,
+prodprice - prodcost as Profit
+FROM product;
+
+SELECT ordNum,
+prodid,
+quantity,
+price,
+sum(quantity*price) AS amtDue
+FROM orderitem
+GROUP BY ordNum;
+
+-- Task 6: Case Expressions --
+
+SELECT ordnum, 
+prodid, 
+discountlevel,
+(quantity * price) AS amtDue,
+CASE discountlevel
+WHEN 'b' THEN (quantity * price) * .95
+WHEN 'c' THEN (quantity * price) * .90
+WHEN 'd' THEN (quantity * price) * .80
+ELSE (quantity * price)
+END 
+DueAfterDiscount
+FROM orderitem;
